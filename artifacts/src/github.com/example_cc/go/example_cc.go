@@ -34,7 +34,42 @@ type SimpleChaincode struct {
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response  {
 	logger.Info("########### example_cc0 Init ###########")
 
-	_, args := stub.GetFunctionAndParameters()
+	function, args := stub.GetFunctionAndParameters()
+	
+	if function == "Init"{
+		logger.info("Initialising with nothing");
+	}
+
+}
+
+// Transaction makes payment of X units from A to B
+func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
+	logger.Info("########### example_cc0 Invoke ###########")
+
+	function, args := stub.GetFunctionAndParameters()
+	
+	if function == "delete" {
+		// Deletes an entity from its state
+		return t.delete(stub, args)
+	}
+
+	if function == "query" {
+		// queries an entity state
+		return t.query(stub, args)
+	}
+	if function == "create" {
+		eturn t.create(stub, args)
+	}
+	if function == "move" {
+		// Deletes an entity from its state
+		return t.move(stub, args)
+	}
+
+	logger.Errorf("Unknown action, check the first argument, must be one of 'delete', 'query', or 'move'. But got: %v", args[0])
+	return shim.Error(fmt.Sprintf("Unknown action, check the first argument, must be one of 'delete', 'query', or 'move'. But got: %v", args[0]))
+}
+
+func (t *SimpleChaincode) create(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	var A, B string    // Entities
 	var Aval, Bval int // Asset holdings
 	var err error
@@ -64,32 +99,6 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response  {
 	}
 
 	return shim.Success(nil)
-
-
-}
-
-// Transaction makes payment of X units from A to B
-func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
-	logger.Info("########### example_cc0 Invoke ###########")
-
-	function, args := stub.GetFunctionAndParameters()
-	
-	if function == "delete" {
-		// Deletes an entity from its state
-		return t.delete(stub, args)
-	}
-
-	if function == "query" {
-		// queries an entity state
-		return t.query(stub, args)
-	}
-	if function == "move" {
-		// Deletes an entity from its state
-		return t.move(stub, args)
-	}
-
-	logger.Errorf("Unknown action, check the first argument, must be one of 'delete', 'query', or 'move'. But got: %v", args[0])
-	return shim.Error(fmt.Sprintf("Unknown action, check the first argument, must be one of 'delete', 'query', or 'move'. But got: %v", args[0]))
 }
 
 func (t *SimpleChaincode) move(stub shim.ChaincodeStubInterface, args []string) pb.Response {
@@ -201,3 +210,4 @@ func main() {
 		logger.Errorf("Error starting Simple chaincode: %s", err)
 	}
 }
+
