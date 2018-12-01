@@ -1,9 +1,7 @@
 #!/bin/bash
-#
-# Copyright IBM Corp. All Rights Reserved.
-#
-# SPDX-License-Identifier: Apache-2.0
-#
+#RxMed -Run Script
+#@author Ananthapadmanabhan (ananthan.vr@netobjex.com)
+#Copyright netObjex, Inc. 2018 All Rights Reserved.
 
 function dkcl(){
         CONTAINER_IDS=$(docker ps -aq)

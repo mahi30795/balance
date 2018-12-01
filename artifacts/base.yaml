@@ -1,7 +1,6 @@
-# Copyright IBM Corp. All Rights Reserved.
-#
-# SPDX-License-Identifier: Apache-2.0
-#
+#RxMed -Base YAML
+#@author Ananthapadmanabhan (ananthan.vr@netobjex.com)
+#Copyright netObjex, Inc. 2018 All Rights Reserved.
 
 version: '2'
 services:

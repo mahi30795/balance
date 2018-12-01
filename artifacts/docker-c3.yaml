@@ -1,0 +1,99 @@
+#RxMed -Docker Compose YAML- Org3
+#@author Ananthapadmanabhan (ananthan.vr@netobjex.com)
+#Copyright netObjex, Inc. 2018 All Rights Reserved.
+version: '2'
+
+services:
+
+  ca.org3.rxmed.com:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org3
+      - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org3.rxmed.com-cert.pem
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/20fa29c274e85076dd80d01b375c1352af3bd7c6dcb4ef464d9712f4ba616a89_sk
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org3.rxmed.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/20fa29c274e85076dd80d01b375c1352af3bd7c6dcb4ef464d9712f4ba616a89_sk
+    ports:
+      - "9054:7054"
+    command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
+    volumes:
+      - ./channel/crypto-config/peerOrganizations/org3.rxmed.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerOrg3
+
+  peer0.org3.rxmed.com:
+    container_name: peer0.org3.rxmed.com
+    extends:
+      file:   base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.org3.rxmed.com
+      - CORE_PEER_LOCALMSPID=Org3MSP
+      - CORE_PEER_ADDRESS=peer0.org3.rxmed.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.org3.rxmed.com:7051      
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org3.rxmed.com:7051
+    ports:
+      - 9051:7051
+      - 9053:7053
+    volumes:
+        - ./channel/crypto-config/peerOrganizations/org3.rxmed.com/peers/peer0.org3.rxmed.com/:/etc/hyperledger/crypto/peer
+    # depends_on:
+    #   - orderer.rxmed.com
+
+  peer1.org3.rxmed.com:
+    container_name: peer1.org3.rxmed.com
+    extends:
+      file:   base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.org3.rxmed.com
+      - CORE_PEER_LOCALMSPID=Org3MSP
+      - CORE_PEER_ADDRESS=peer1.org3.rxmed.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org3.rxmed.com:7051      
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org3.rxmed.com:7051
+    ports:
+      - 9056:7051
+      - 9058:7053
+    volumes:
+        - ./channel/crypto-config/peerOrganizations/org3.rxmed.com/peers/peer1.org3.rxmed.com/:/etc/hyperledger/crypto/peer
+    # depends_on:
+    #   - orderer.rxmed.com
+
+  peer2.org3.rxmed.com:
+    container_name: peer2.org3.rxmed.com
+    extends:
+      file:   base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer2.org3.rxmed.com
+      - CORE_PEER_LOCALMSPID=Org3MSP
+      - CORE_PEER_ADDRESS=peer2.org3.rxmed.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer2.org3.rxmed.com:7051      
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer2.org3.rxmed.com:7051
+    ports:
+      - 9061:7051
+      - 9063:7053
+    volumes:
+        - ./channel/crypto-config/peerOrganizations/org3.rxmed.com/peers/peer2.org3.rxmed.com/:/etc/hyperledger/crypto/peer
+    # depends_on:
+    #   - orderer.rxmed.com
+
+  peer3.org3.rxmed.com:
+    container_name: peer3.org3.rxmed.com
+    extends:
+      file:   base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer3.org3.rxmed.com
+      - CORE_PEER_LOCALMSPID=Org3MSP
+      - CORE_PEER_ADDRESS=peer3.org3.rxmed.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer3.org3.rxmed.com:7051      
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer3.org3.rxmed.com:7051
+    ports:
+      - 9065:7051
+      - 9067:7053
+    volumes:
+        - ./channel/crypto-config/peerOrganizations/org3.rxmed.com/peers/peer3.org3.rxmed.com/:/etc/hyperledger/crypto/peer
+    # depends_on:
+    #   - orderer.rxmed.com

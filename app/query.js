@@ -1,18 +1,8 @@
-/**
- * Copyright 2017 IBM All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+//RxMed -Query JS
+//@author Ananthapadmanabhan (ananthan.vr@netobjex.com)
+//Copyright netObjex, Inc. 2018 All Rights Reserved.
+
+
 var util = require('util');
 var helper = require('./helper.js');
 var logger = helper.getLogger('Query');
@@ -28,22 +18,22 @@ var queryChaincode = async function(peer, channelName, chaincodeName, args, fcn,
 			logger.error(message);
 			throw new Error(message);
 		}
-
+		console.log("###########################" + args)
 		// send query
 		var request = {
 			targets : [peer], //queryByChaincode allows for multiple targets
 			chaincodeId: chaincodeName,
+			args: args,
 			fcn: fcn,
-			args: args
 		};
+
 		let response_payloads = await channel.queryByChaincode(request);
 		if (response_payloads) {
 			for (let i = 0; i < response_payloads.length; i++) {
-				logger.info(args[0]+' now has ' + response_payloads[i].toString('utf8') +
-					' after the move');
+				logger.info(fcn + ' have ' + response_payloads[i].toString('utf8'));
 			}
-			return args[0]+' now has ' + response_payloads[0].toString('utf8') +
-				' after the move';
+			return fcn + ' have ' + response_payloads[0].toString('utf8');
+			
 		} else {
 			logger.error('response_payloads is null');
 			return 'response_payloads is null';
@@ -115,7 +105,7 @@ var getBlockByHash = async function(peer, channelName, hash, username, org_name)
 			throw new Error(message);
 		}
 
-		let response_payload = await channel.queryBlockByHash(Buffer.from(hash,'hex'), peer);
+		let response_payload = await channel.queryBlockByHash(Buffer.from(hash), peer);
 		if (response_payload) {
 			logger.debug(response_payload);
 			return response_payload;

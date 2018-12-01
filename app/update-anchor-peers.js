@@ -1,8 +1,7 @@
-/**
- * Copyright Hitachi America, Ltd. All Rights Reserved.
- *
- * SPDX-License-Identifier: Apache-2.0
- */
+//RxMed -Update Anchor Peers
+//@author Ananthapadmanabhan (ananthan.vr@netobjex.com)
+//Copyright netObjex, Inc. 2018 All Rights Reserved.
+
 
 'use strict';
 var util = require('util');

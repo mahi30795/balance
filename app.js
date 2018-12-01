@@ -1,18 +1,3 @@
-/**
- * Copyright 2017 IBM All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the 'License');
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an 'AS IS' BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
 'use strict';
 var log4js = require('log4js');
 var logger = log4js.getLogger('SampleWebApp');
@@ -106,7 +91,9 @@ function getErrorMessage(field) {
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////// REST ENDPOINTS START HERE ///////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
+
 // Register and enroll user
+
 app.post('/users', async function(req, res) {
 	var username = req.body.username;
 	var orgName = req.body.orgName;
@@ -138,7 +125,9 @@ app.post('/users', async function(req, res) {
 	}
 
 });
+
 // Create Channel
+
 app.post('/channels', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< C R E A T E  C H A N N E L >>>>>>>>>>>>>>>>>');
 	logger.debug('End point : /channels');
@@ -158,7 +147,9 @@ app.post('/channels', async function(req, res) {
 	let message = await createChannel.createChannel(channelName, channelConfigPath, req.username, req.orgname);
 	res.send(message);
 });
+
 // Join Channel
+
 app.post('/channels/:channelName/peers', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< J O I N  C H A N N E L >>>>>>>>>>>>>>>>>');
 	var channelName = req.params.channelName;
@@ -180,7 +171,9 @@ app.post('/channels/:channelName/peers', async function(req, res) {
 	let message =  await join.joinChannel(channelName, peers, req.username, req.orgname);
 	res.send(message);
 });
+
 // Update anchor peers
+
 app.post('/channels/:channelName/anchorpeers', async function(req, res) {
 	logger.debug('==================== UPDATE ANCHOR PEERS ==================');
 	var channelName = req.params.channelName;
@@ -199,7 +192,9 @@ app.post('/channels/:channelName/anchorpeers', async function(req, res) {
 	let message = await updateAnchorPeers.updateAnchorPeers(channelName, configUpdatePath, req.username, req.orgname);
 	res.send(message);
 });
+
 // Install chaincode on target peers
+
 app.post('/chaincodes', async function(req, res) {
 	logger.debug('==================== INSTALL CHAINCODE ==================');
 	var peers = req.body.peers;
@@ -234,7 +229,9 @@ app.post('/chaincodes', async function(req, res) {
 	}
 	let message = await install.installChaincode(peers, chaincodeName, chaincodePath, chaincodeVersion, chaincodeType, req.username, req.orgname)
 	res.send(message);});
+
 // Instantiate chaincode on target peers
+
 app.post('/channels/:channelName/chaincodes', async function(req, res) {
 	logger.debug('==================== INSTANTIATE CHAINCODE ==================');
 	var peers = req.body.peers;
@@ -267,15 +264,17 @@ app.post('/channels/:channelName/chaincodes', async function(req, res) {
 		res.json(getErrorMessage('\'chaincodeType\''));
 		return;
 	}
-	if (!args) {
+	/*if (!args) {
 		res.json(getErrorMessage('\'args\''));
 		return;
-	}
+	}*/
 
 	let message = await instantiate.instantiateChaincode(peers, channelName, chaincodeName, chaincodeVersion, chaincodeType, fcn, args, req.username, req.orgname);
 	res.send(message);
 });
+
 // Invoke transaction on chaincode on target peers
+
 app.post('/channels/:channelName/chaincodes/:chaincodeName', async function(req, res) {
 	logger.debug('==================== INVOKE ON CHAINCODE ==================');
 	var peers = req.body.peers;
@@ -307,7 +306,9 @@ app.post('/channels/:channelName/chaincodes/:chaincodeName', async function(req,
 	let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, fcn, args, req.username, req.orgname);
 	res.send(message);
 });
+
 // Query on chaincode on target peers
+
 app.get('/channels/:channelName/chaincodes/:chaincodeName', async function(req, res) {
 	logger.debug('==================== QUERY BY CHAINCODE ==================');
 	var channelName = req.params.channelName;
@@ -333,18 +334,24 @@ app.get('/channels/:channelName/chaincodes/:chaincodeName', async function(req, 
 		res.json(getErrorMessage('\'fcn\''));
 		return;
 	}
-	if (!args) {
+	if (fcn != 'queryAll' && !args) {
 		res.json(getErrorMessage('\'args\''));
 		return;
 	}
-	args = args.replace(/'/g, '"');
-	args = JSON.parse(args);
-	logger.debug(args);
+	if(args) {
+		args = args.replace(/'/g, '"');
+		args = JSON.parse(args);
+		logger.debug(args);
+	} else {
+		args = 'undefined'
+	}
 
 	let message = await query.queryChaincode(peer, channelName, chaincodeName, args, fcn, req.username, req.orgname);
 	res.send(message);
 });
+
 //  Query Get Block by BlockNumber
+
 app.get('/channels/:channelName/blocks/:blockId', async function(req, res) {
 	logger.debug('==================== GET BLOCK BY NUMBER ==================');
 	let blockId = req.params.blockId;
@@ -360,7 +367,9 @@ app.get('/channels/:channelName/blocks/:blockId', async function(req, res) {
 	let message = await query.getBlockByNumber(peer, req.params.channelName, blockId, req.username, req.orgname);
 	res.send(message);
 });
+
 // Query Get Transaction by Transaction ID
+
 app.get('/channels/:channelName/transactions/:trxnId', async function(req, res) {
 	logger.debug('================ GET TRANSACTION BY TRANSACTION_ID ======================');
 	logger.debug('channelName : ' + req.params.channelName);
@@ -374,7 +383,9 @@ app.get('/channels/:channelName/transactions/:trxnId', async function(req, res) 
 	let message = await query.getTransactionByID(peer, req.params.channelName, trxnId, req.username, req.orgname);
 	res.send(message);
 });
+
 // Query Get Block by Hash
+
 app.get('/channels/:channelName/blocks', async function(req, res) {
 	logger.debug('================ GET BLOCK BY HASH ======================');
 	logger.debug('channelName : ' + req.params.channelName);
@@ -388,7 +399,9 @@ app.get('/channels/:channelName/blocks', async function(req, res) {
 	let message = await query.getBlockByHash(peer, req.params.channelName, hash, req.username, req.orgname);
 	res.send(message);
 });
+
 //Query for Channel Information
+
 app.get('/channels/:channelName', async function(req, res) {
 	logger.debug('================ GET CHANNEL INFORMATION ======================');
 	logger.debug('channelName : ' + req.params.channelName);
@@ -397,7 +410,9 @@ app.get('/channels/:channelName', async function(req, res) {
 	let message = await query.getChainInfo(peer, req.params.channelName, req.username, req.orgname);
 	res.send(message);
 });
+
 //Query for Channel instantiated chaincodes
+
 app.get('/channels/:channelName/chaincodes', async function(req, res) {
 	logger.debug('================ GET INSTANTIATED CHAINCODES ======================');
 	logger.debug('channelName : ' + req.params.channelName);
@@ -406,7 +421,9 @@ app.get('/channels/:channelName/chaincodes', async function(req, res) {
 	let message = await query.getInstalledChaincodes(peer, req.params.channelName, 'instantiated', req.username, req.orgname);
 	res.send(message);
 });
+
 // Query to fetch all Installed/instantiated chaincodes
+
 app.get('/chaincodes', async function(req, res) {
 	var peer = req.query.peer;
 	var installType = req.query.type;
@@ -415,7 +432,9 @@ app.get('/chaincodes', async function(req, res) {
 	let message = await query.getInstalledChaincodes(peer, null, 'installed', req.username, req.orgname)
 	res.send(message);
 });
+
 // Query to fetch channels
+
 app.get('/channels', async function(req, res) {
 	logger.debug('================ GET CHANNELS ======================');
 	logger.debug('peer: ' + req.query.peer);

@@ -1,26 +1,18 @@
-/**
- * Copyright 2017 IBM All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+//RxMed -Instantiate Chaincode
+//@author Ananthapadmanabhan (ananthan.vr@netobjex.com)
+//Copyright netObjex, Inc. 2018 All Rights Reserved.
+
+
 'use strict';
+var path = require('path');
+var fs = require('fs');
 var util = require('util');
+var hfc = require('fabric-client');
 var helper = require('./helper.js');
 var logger = helper.getLogger('instantiate-chaincode');
 
-var instantiateChaincode = async function(peers, channelName, chaincodeName, chaincodeVersion, functionName, chaincodeType, args, username, org_name) {
-	logger.debug('\n\n============ Instantiate chaincode on channel ' + channelName +
-		' ============\n');
+var instantiateChaincode = async function(peers, channelName, chaincodeName, chaincodeVersion, chaincodeType, fcn, args, username, org_name) {
+	logger.debug('\n\n============ Instantiate chaincode on channel ' + channelName + ' ============\n');
 	var error_message = null;
 
 	try {
@@ -34,38 +26,26 @@ var instantiateChaincode = async function(peers, channelName, chaincodeName, cha
 			throw new Error(message);
 		}
 		var tx_id = client.newTransactionID(true); // Get an admin based transactionID
-		                                       // An admin based transactionID will
-		                                       // indicate that admin identity should
-		                                       // be used to sign the proposal request.
 		// will need the transaction ID string for the event registration later
-		var deployId = tx_id.getTransactionID();
+		var tx_id_string = tx_id.getTransactionID();
 
 		// send proposal to endorser
 		var request = {
-			targets : peers,
+			// targets: peers,
 			chaincodeId: chaincodeName,
 			chaincodeType: chaincodeType,
 			chaincodeVersion: chaincodeVersion,
 			args: args,
-			txId: tx_id,
-
-			// Use this to demonstrate the following policy:
-			// The policy can be fulfilled when members from both orgs signed.
-			'endorsement-policy': {
-			        identities: [
-					{ role: { name: 'member', mspId: 'Org1MSP' }},
-					{ role: { name: 'member', mspId: 'Org2MSP' }}
-			        ],
-			        policy: {
-					'2-of':[{ 'signed-by': 0 }, { 'signed-by': 1 }]
-			        }
-		        }
+			txId: tx_id
 		};
 
-		if (functionName)
-			request.fcn = functionName;
-
-		let results = await channel.sendInstantiateProposal(request, 600000); //instantiate takes much longer
+		logger.debug('Transaction request: ' + JSON.stringify(request));
+		let results = null;
+		if (chaincodeVersion == 'v0') {
+			results = await channel.sendInstantiateProposal(request, 300000); //instantiate takes much longer
+		} else {
+			results = await channel.sendUpgradeProposal(request, 300000); //instantiate takes much longer
+		}
 
 		// the returned object has both the endorsement results
 		// and the actual proposal, the proposal will be needed
@@ -82,9 +62,9 @@ var instantiateChaincode = async function(peers, channelName, chaincodeName, cha
 			if (proposalResponses && proposalResponses[i].response &&
 				proposalResponses[i].response.status === 200) {
 				one_good = true;
-				logger.info('instantiate proposal was good');
+				logger.info(util.format('Instantiate proposal for %s was good (%d).', chaincodeName, i));
 			} else {
-				logger.error('instantiate proposal was bad');
+				logger.error(util.format('Instantiate proposal for %s was bad (%d).', chaincodeName, i));
 			}
 			all_good = all_good & one_good;
 		}
@@ -107,14 +87,14 @@ var instantiateChaincode = async function(peers, channelName, chaincodeName, cha
 						let message = 'REQUEST_TIMEOUT:' + eh.getPeerAddr();
 						logger.error(message);
 						eh.disconnect();
-					}, 60000);
-					eh.registerTxEvent(deployId, (tx, code, block_num) => {
+					}, 240000);
+					eh.registerTxEvent(tx_id_string, (tx, code, block_num) => {
 						logger.info('The chaincode instantiate transaction has been committed on peer %s',eh.getPeerAddr());
 						logger.info('Transaction %s has status of %s in blocl %s', tx, code, block_num);
 						clearTimeout(event_timeout);
 
 						if (code !== 'VALID') {
-							let message = util.format('The chaincode instantiate transaction was invalid, code:%s',code);
+							let message = until.format('The chaincode instantiate transaction was invalid, code:%s',code);
 							logger.error(message);
 							reject(new Error(message));
 						} else {
@@ -139,11 +119,7 @@ var instantiateChaincode = async function(peers, channelName, chaincodeName, cha
 			});
 
 			var orderer_request = {
-				txId: tx_id, // must include the transaction id so that the outbound
-				             // transaction to the orderer will be signed by the admin
-							 // id as was the proposal above, notice that transactionID
-							 // generated above was based on the admin id not the current
-							 // user assigned to the 'client' instance.
+				txId: tx_id, // note: transactionID is based on the admin id not the current user assigned to the 'client' instance.
 				proposalResponses: proposalResponses,
 				proposal: proposal
 			};
@@ -182,21 +158,29 @@ var instantiateChaincode = async function(peers, channelName, chaincodeName, cha
 		error_message = error.toString();
 	}
 
+	let response = { success: false, message: "" };
+
 	if (!error_message) {
 		let message = util.format(
 			'Successfully instantiate chaincode in organization %s to the channel \'%s\'',
 			org_name, channelName);
 		logger.info(message);
+
 		// build a response to send back to the REST caller
-		let response = {
-			success: true,
-			message: message
-		};
-		return response;
+		response.success = true;
+		response.message = message;
+		response.tx_id = tx_id_string;
 	} else {
-		let message = util.format('Failed to instantiate. cause:%s',error_message);
+		let message = util.format('Failed to instantiate. cause: %s',error_message);
 		logger.error(message);
-		throw new Error(message);
+
+		// build a response to send back to the REST caller
+		response.success = true;
+		response.message = message;
+		response.tx_id = tx_id_string;
 	}
+
+	return response;
 };
+
 exports.instantiateChaincode = instantiateChaincode;

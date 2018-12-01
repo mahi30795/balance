@@ -11,7 +11,7 @@ OrdererOrgs:
   # Orderer
   # ---------------------------------------------------------------------------
   - Name: Orderer
-    Domain: example.com
+    Domain: rxmed.com
 
     # ---------------------------------------------------------------------------
     # "Specs" - See PeerOrgs below for complete description
@@ -27,7 +27,7 @@ PeerOrgs:
   # Org1
   # ---------------------------------------------------------------------------
   - Name: Org1
-    Domain: org1.example.com
+    Domain: org1.rxmed.com
 
     # ---------------------------------------------------------------------------
     # "CA"
@@ -36,7 +36,7 @@ PeerOrgs:
     # organization.  This entry is a Spec.  See "Specs" section below for details.
     # ---------------------------------------------------------------------------
     CA:
-       Hostname: ca # implicitly ca.org1.example.com
+       Hostname: ca # implicitly ca.org1.rxmed.com
 
     # ---------------------------------------------------------------------------
     # "Specs"
@@ -61,8 +61,8 @@ PeerOrgs:
     #                     - {{ .Hostname }}
     # ---------------------------------------------------------------------------
     # Specs:
-    #   - Hostname: foo # implicitly "foo.org1.example.com"
-    #     CommonName: foo27.org5.example.com # overrides Hostname-based FQDN set above
+    #   - Hostname: foo # implicitly "foo.org1.rxmed.com"
+    #     CommonName: foo27.org5.rxmed.com # overrides Hostname-based FQDN set above
     #     SANS:
     #       - "bar.{{.Domain}}"
     #       - "altfoo.{{.Domain}}"
@@ -83,7 +83,7 @@ PeerOrgs:
     # name collisions
     # ---------------------------------------------------------------------------
     Template:
-      Count: 2
+      Count: 4
       # Start: 5
       # Hostname: {{.Prefix}}{{.Index}} # default
       SANS:
@@ -101,13 +101,26 @@ PeerOrgs:
   # Org2: See "Org1" for full specification
   # ---------------------------------------------------------------------------
   - Name: Org2
-    Domain: org2.example.com
+    Domain: org2.rxmed.com
     CA:
-       Hostname: ca # implicitly ca.org1.example.com
+       Hostname: ca # implicitly ca.org1.rxmed.com
 
     Template:
-      Count: 2
+      Count: 4
       SANS:
         - "localhost"
     Users:
       Count: 1
+
+  - Name: Org3
+    Domain: org3.rxmed.com
+    CA:
+       Hostname: ca # implicitly ca.org1.rxmed.com
+
+    Template:
+      Count: 4
+      SANS:
+        - "localhost"
+    Users:
+      Count: 1
+
