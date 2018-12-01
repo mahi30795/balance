@@ -1,7 +1,4 @@
 ---
-#RxMed -Network Configuration
-#@author Ananthapadmanabhan (ananthan.vr@netobjex.com)
-#Copyright netObjex, Inc. 2018 All Rights Reserved.
 #
 # The network connection profile provides client applications the information about the target
 # blockchain network that are necessary for the applications to interact with it. These are all
@@ -209,28 +206,28 @@ orderers:
 #
 peers:
   peer0.org1.rxmed.com:
-    url: grpcs://18.191.245.142:7051
+    url: grpcs://localhost:7051
     grpcOptions:
       ssl-target-name-override: peer0.org1.rxmed.com
     tlsCACerts:
       path: artifacts/channel/crypto-config/peerOrganizations/org1.rxmed.com/peers/peer0.org1.rxmed.com/tls/ca.crt
 
   peer1.org1.rxmed.com:
-    url: grpcs://18.191.245.142:7056
+    url: grpcs://localhost:7056
     grpcOptions:
       ssl-target-name-override: peer1.org1.rxmed.com
     tlsCACerts:
       path: artifacts/channel/crypto-config/peerOrganizations/org1.rxmed.com/peers/peer1.org1.rxmed.com/tls/ca.crt
 
   peer2.org1.rxmed.com:
-    url: grpcs://18.191.245.142:7061
+    url: grpcs://localhost:7061
     grpcOptions:
       ssl-target-name-override: peer2.org1.rxmed.com
     tlsCACerts:
       path: artifacts/channel/crypto-config/peerOrganizations/org1.rxmed.com/peers/peer2.org1.rxmed.com/tls/ca.crt
 
   peer3.org1.rxmed.com:
-    url: grpcs://18.191.245.142:7065
+    url: grpcs://localhost:7065
     grpcOptions:
       ssl-target-name-override: peer3.org1.rxmed.com
     tlsCACerts:
@@ -238,59 +235,59 @@ peers:
   
 
   peer0.org2.rxmed.com:
-    url: grpcs://3.16.187.66:8051
+    url: grpcs://localhost:8051
     grpcOptions:
       ssl-target-name-override: peer0.org2.rxmed.com
     tlsCACerts:
       path: artifacts/channel/crypto-config/peerOrganizations/org2.rxmed.com/peers/peer0.org2.rxmed.com/tls/ca.crt
 
   peer1.org2.rxmed.com:
-    url: grpcs://3.16.187.66:8056
-    eventUrl: grpcs://3.16.187.66:8058
+    url: grpcs://localhost:8056
+    eventUrl: grpcs://localhost:8058
     grpcOptions:
       ssl-target-name-override: peer1.org2.rxmed.com
     tlsCACerts:
       path: artifacts/channel/crypto-config/peerOrganizations/org2.rxmed.com/peers/peer1.org2.rxmed.com/tls/ca.crt
 
   peer2.org2.rxmed.com:
-    url: grpcs://3.16.187.66:8061
+    url: grpcs://localhost:8061
     grpcOptions:
       ssl-target-name-override: peer2.org2.rxmed.com
     tlsCACerts:
       path: artifacts/channel/crypto-config/peerOrganizations/org2.rxmed.com/peers/peer2.org2.rxmed.com/tls/ca.crt
 
   peer3.org2.rxmed.com:
-    url: grpcs://3.16.187.66:8065
-    eventUrl: grpcs://3.16.187.66:8067
+    url: grpcs://localhost:8065
+    eventUrl: grpcs://localhost:8067
     grpcOptions:
       ssl-target-name-override: peer3.org2.rxmed.com
     tlsCACerts:
       path: artifacts/channel/crypto-config/peerOrganizations/org2.rxmed.com/peers/peer3.org2.rxmed.com/tls/ca.crt
 
   peer0.org3.rxmed.com:
-    url: grpcs://18.219.107.8:9051
+    url: grpcs://localhost:9051
     grpcOptions:
       ssl-target-name-override: peer0.org3.rxmed.com
     tlsCACerts:
       path: artifacts/channel/crypto-config/peerOrganizations/org3.rxmed.com/peers/peer0.org3.rxmed.com/tls/ca.crt
 
   peer1.org3.rxmed.com:
-    url: grpcs://18.219.107.8:9056
-    eventUrl: grpcs://18.219.107.8:9058
+    url: grpcs://localhost:9056
+    eventUrl: grpcs://localhost:9058
     grpcOptions:
       ssl-target-name-override: peer1.org3.rxmed.com
     tlsCACerts:
       path: artifacts/channel/crypto-config/peerOrganizations/org3.rxmed.com/peers/peer1.org3.rxmed.com/tls/ca.crt
 
   peer2.org3.rxmed.com:
-    url: grpcs://18.219.107.8:9061
+    url: grpcs://localhost:9061
     grpcOptions:
       ssl-target-name-override: peer2.org3.rxmed.com
     tlsCACerts:
       path: artifacts/channel/crypto-config/peerOrganizations/org3.rxmed.com/peers/peer2.org3.rxmed.com/tls/ca.crt
 
   peer3.org3.rxmed.com:
-    url: grpcs://18.219.107.8:9065
+    url: grpcs://localhost:9065
     eventUrl: grpcs://localhost:9067
     grpcOptions:
       ssl-target-name-override: peer3.org3.rxmed.com
@@ -304,7 +301,7 @@ peers:
 #
 certificateAuthorities:
   ca-org1:
-    url: https://18.191.245.142:7054
+    url: https://localhost:7054
     # the properties specified under this object are passed to the 'http' client verbatim when
     # making the request to the Fabric-CA server
     httpOptions:
@@ -321,7 +318,7 @@ certificateAuthorities:
     caName: ca-org1
 
   ca-org2:
-    url: https://3.16.187.66:8054
+    url: https://localhost:8054
     httpOptions:
       verify: false
     tlsCACerts:
@@ -333,7 +330,7 @@ certificateAuthorities:
     caName: ca-org2
 
   ca-org3:
-    url: https://18.219.107.8:9054
+    url: https://localhost:9054
     httpOptions:
       verify: false
     tlsCACerts:
