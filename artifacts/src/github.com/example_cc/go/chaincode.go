@@ -97,17 +97,17 @@ func (t *rxMedChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 		j = j + 1
 	}
 
-	// patients := []Patient{
-	// 	Patient{PatientID: "PAT1", []Medication{Medication{MedName: "ccc", Compound: "xxxxx", Dosage: "vvvv", Quantity: "bbbbb"}}, Pin: "686101"}}
+	patients := []Patient{
+		Patient{PatientID: "PAT1", []Medications{Medication{MedName: "ccc", Compound: "xxxxx", Dosage: "vvvv", Quantity: "bbbbb"}, Medication{MedName: "cc1", Compound: "xx1", Dosage: "vv1", Quantity: "bb1"}}, Pin: "686101"}}
 
-	// j := 0
-	// for j < len(patients) {
-	// 	fmt.Println("j is ", j)
-	// 	patientAsBytes, _ := json.Marshal(patients[j])
-	// 	stub.PutState("PRESC"+strconv.Itoa(j), patientAsBytes)
-	// 	fmt.Println("Added", patients[j])
-	// 	j = j + 1
-	// }
+	j := 0
+	for j < len(patients) {
+		fmt.Println("j is ", j)
+		patientAsBytes, _ := json.Marshal(patients[j])
+		stub.PutState("PRESC"+strconv.Itoa(j), patientAsBytes)
+		fmt.Println("Added", patients[j])
+		j = j + 1
+	}
 
 	pharmacies := []Pharmacy{
 		Pharmacy{PharmacyID: "PHARM1", Name: "Shahnaz Pharmaceuticals", Pin: "691683", Owner: "Shah"},
